@@ -1,0 +1,102 @@
+/* Styles for Login and Signup Pages */
+
+body {
+    background-color: #e0f7fa; /* Light teal background */
+    font-family: 'Roboto', sans-serif; /* Modern Google Font (Roboto) */
+    height: 100vh; /* Full viewport height */
+    margin: 0; /* Remove default margin */
+    padding-top: 100px; /* Space at the top to center content vertically */
+    text-align: center; /* Center content horizontally */
+}
+
+.container {
+    background-color: #ffffff; /* White background for the form */
+    padding: 30px;
+    border-radius: 12px; /* Slightly more rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    width: 350px; /* Slightly wider container */
+    margin: 0 auto; /* Center the container horizontally */
+}
+
+h1 {
+    font-size: 28px;
+    color: #00796b; /* Dark teal color for heading */
+    margin-bottom: 25px;
+}
+
+form {
+    width:50%;
+    margin-bottom: 20px; /* Add space below form */
+}
+
+label {
+    display: block; /* Ensure labels are block elements */
+    font-size: 16px;
+    color: #00796b; /* Matching color for label text */
+    margin-bottom: 5px; /* Space below labels */
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #b2dfdb; /* Softer border color */
+    border-radius: 6px; /* Slightly more rounded input fields */
+    font-size: 16px;
+    width: 100%; /* Make inputs take full width */
+    box-sizing: border-box; /* Include padding and border in width */
+    transition: border-color 0.3s ease; /* Smooth border transition */
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #00796b; /* Dark teal on focus */
+    outline: none; /* Remove default outline */
+}
+
+button {
+    padding: 12px;
+    background-color: #00796b; /* Teal background for button */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px; /* Larger button text */
+    width: 100%; /* Make button take full width */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth hover transition */
+}
+
+button:hover {
+    background-color: #004d40; /* Darker teal on hover */
+}
+
+.nav-links {
+    margin-top: 20px;
+    display: block;
+    text-align: center;
+}
+
+.nav-links p {
+    margin-bottom: 10px; /* Add margin below the text */
+}
+
+.nav-links a {
+    color: #00796b; /* Matching link color */
+    text-decoration: none;
+    font-size: 14px;
+    margin: 0; /* Remove the horizontal margin */
+    display: block; /* Ensure the links are displayed below each other */
+    transition: color 0.3s ease; /* Smooth hover transition */
+}
+
+.nav-links a:hover {
+    color: #004d40; /* Darker teal on hover */
+    text-decoration: underline;
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 400px) {
+    .container {
+        width: 90%; /* Adjust container width for mobile */
+    }
+}

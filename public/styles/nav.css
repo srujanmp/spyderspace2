@@ -1,0 +1,39 @@
+/* public/styles/styles.css */
+
+body {
+    font-family: Arial, sans-serif; /* Use a sans-serif font for the body */
+    margin: 0; /* Remove default margins */
+    padding: 0; /* Remove default padding */
+    background-color: #f4f4f4; /* Set a light gray background color */
+}
+
+nav {
+    background-color: #333; /* Dark background for the nav */
+    color: #fff; /* White text color */
+    padding: 10px; /* Add some padding */
+}
+
+nav ul {
+    list-style-type: none; /* Remove bullets from list */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    display: flex; /* Use flexbox for horizontal layout */
+}
+
+nav ul li {
+    margin-right: 20px; /* Space between navigation items */
+}
+
+nav ul li a {
+    color: white; /* Link text color */
+    text-decoration: none; /* Remove underline from links */
+    font-weight: bold; /* Bold text for links */
+}
+
+nav ul li a:hover {
+    text-decoration: underline; /* Underline on hover for links */
+}
+
+p {
+    margin: 0; /* Remove default margin */
+}

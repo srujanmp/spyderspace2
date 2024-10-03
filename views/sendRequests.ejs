@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Friend Requests</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Link to your CSS -->
+</head>
+<body>
+    <%- include('_navbar.ejs') %> <!-- Corrected syntax for including the navbar -->
+
+    <h1>Send Friend Requests</h1>
+
+    <h2>Available Users</h2>
+    <ul>
+        <% users.forEach(user => { %>
+            <li>
+                <%= user.username %>
+                <form action="/friends/send-request/<%= user._id %>" method="POST" style="display:inline;">
+                    <button type="submit">Send Friend Request</button>
+                </form>
+            </li>
+        <% }); %>
+    </ul>
+
+    
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Friends</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Link to your CSS -->
+</head>
+<body>
+    <%- include('_navbar.ejs') %> <!-- Corrected syntax for including the navbar -->
+
+    <h2>Your Friends</h2>
+<ul>
+    <% friends.forEach(friend => { %>
+        <li>
+            <%= friend.username %>
+            <form action="/friends/remove/<%= friend._id %>" method="POST" style="display:inline;">
+                <button type="submit">Remove Friend</button>
+            </form>
+        </li>
+    <% }) %>
+</ul>
+
+
+   
+</body>
+</html>
