@@ -89,7 +89,9 @@
 <body>
     <%- include('_navbar.ejs') %> <!-- Include the navbar -->
 
-        <h2>Chat with <%= receiver.username %>
+        <h2>
+            <img src="/images/<%= receiver.profilePicture %>" style="border-radius:60px;"width="30" height="30" alt="<%= receiver.profilePicture %>">
+                   chat with <%= receiver.username  %> ~
         </h2>
 
         <div id="chat-window">
