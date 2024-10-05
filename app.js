@@ -3,8 +3,15 @@ const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const socketio = require('socket.io');
+const http = require('http');
+
 const User = require('./models/User.js');
+const Chat = require('./models/Chat');
+
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server); // Attach socket.io to the server
 
 // Load environment variables from .env file
 require('dotenv').config();
@@ -33,10 +40,43 @@ app.set('views', path.join(__dirname, 'views'));
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Socket.io setup
+io.on('connection', (socket) => {
+    console.log('New WebSocket connection established.');
+
+    // Handle incoming messages from the client
+    socket.on('sendMessage', async ({ sender, receiver, message }) => {
+        try {
+            // Save the message in the database
+            const chatMessage = new Chat({
+                sender,
+                receiver,
+                message
+            });
+            await chatMessage.save();
+            
+            io.emit('receiveMessage', {
+                sender,
+                message,
+                timestamp: chatMessage.timestamp
+            });
+            
+            
+        } catch (err) {
+            console.error('Error sending message:', err);
+        }
+    });
+
+    // Handle disconnection
+    socket.on('disconnect', () => {
+        console.log('WebSocket disconnected.');
+    });
+});
+
 // Import routes
 const authRoutes = require('./routes/auth');
 const friendRoutes = require('./routes/friends'); //
-
+const chatRoutes = require('./routes/chat'); //
 app.use((req, res, next) => {
     res.locals.username = req.session.userId ? req.session.username : null; // Assuming you store username in session
     next();
@@ -44,6 +84,7 @@ app.use((req, res, next) => {
 
 app.use('/auth', authRoutes);
 app.use('/friends', friendRoutes);
+app.use('/chat', chatRoutes);
 // Middleware to protect the / route (restricted if not logged in)
 app.get('/', async (req, res) => {
     if (!req.session.userId) {
@@ -65,6 +106,7 @@ app.get('/', async (req, res) => {
 
 // Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+
+server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

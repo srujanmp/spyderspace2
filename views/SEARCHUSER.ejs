@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Users</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Link to your CSS -->
+    <link rel="stylesheet" href="/styles/styles.css"> <!-- Link to your CSS -->
 </head>
 <body>
     <%- include('_navbar.ejs') %> <!-- Include the navbar partial -->
@@ -16,16 +16,22 @@
         <% } else { %>
             Your Friends
         <% } %></h2>
+
     <ul style="list-style: none; padding: 0;"> <!-- Remove default list styling -->
         <% friends.forEach(friend => { %>
             <li style="display: flex; align-items: center; margin-bottom: 15px;"> <!-- Add spacing between items -->
                 <img src="/images/<%= friend.profilePicture %>" width="50" height="50" style="border-radius: 50%; margin-right: 15px;" alt="<%= friend.profilePicture %>">
                 
                 <strong><%= friend.username %></strong> <!-- Display friend's username -->
-                
+
                 <!-- Form to remove friend -->
                 <form action="/friends/remove/<%= friend._id %>" method="POST" style="display:inline;">
                     <button type="submit" style="margin-left: 10px;">Remove Friend</button>
+                </form>
+
+                <!-- Chat button -->
+                <form action="/chat/<%= friend._id %>" method="GET" style="display:inline;">
+                    <button type="button" style="margin-left: 10px;" onclick="window.location.href='/chat/<%= friend._id %>'">Chat</button>
                 </form>
             </li>
         <% }) %>
@@ -38,7 +44,7 @@
                 <img src="/images/<%= user.profilePicture %>" width="50" height="50" style="border-radius: 50%; margin-right: 15px;" alt="<%= user.profilePicture %>">
                 
                 <strong><%= user.username %></strong> <!-- Display available user's username -->
-                
+
                 <!-- Form to send friend request -->
                 <form action="/friends/send-request/<%= user._id %>" method="POST" style="display:inline;">
                     <button type="submit" style="margin-left: 10px;">Send Friend Request</button>
