@@ -5,53 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Users</title>
     <link rel="stylesheet" href="/styles/styles.css"> <!-- Link to your CSS -->
+    <style>
+        /* Container to center content with 20% margins */
+        .content-container {
+            margin: 0 20%; /* Adds 20% margin to the left and right */
+        }
+
+        /* Add Flexbox styling for list items */
+        ul.profile {
+            padding: 0;
+            list-style: none;
+        }
+
+        li#profile {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .friend-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .friend-info img {
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px; /* Adds space between buttons */
+        }
+
+        .button-group button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .button-group button:hover {
+            background-color: #e0e0e0; /* Add hover effect */
+        }
+    </style>
 </head>
 <body>
     <%- include('_navbar.ejs') %> <!-- Include the navbar partial -->
 
-    <h1>Find Users</h1>
+    <div class="content-container"> <!-- Added container for 20% margins -->
+        <h1>Find Users</h1>
 
-    <h2> <% if (friends.length === 0) { %>
-            No Friends
-        <% } else { %>
-            Your Friends
-        <% } %></h2>
+        <h2>
+            <% if (friends.length === 0) { %>
+                No Friends
+            <% } else { %>
+                Your Friends
+            <% } %>
+        </h2>
 
-    <ul style="list-style: none; padding: 0;"> <!-- Remove default list styling -->
-        <% friends.forEach(friend => { %>
-            <li style="display: flex; align-items: center; margin-bottom: 15px;"> <!-- Add spacing between items -->
-                <img src="/images/<%= friend.profilePicture %>" width="50" height="50" style="border-radius: 50%; margin-right: 15px;" alt="<%= friend.profilePicture %>">
-                
-                <strong><%= friend.username %></strong> <!-- Display friend's username -->
+        <ul class="profile"> <!-- Flexbox applied to the list -->
+            <% friends.forEach(friend => { %>
+                <li id="profile"> <!-- Flexbox styles applied to li -->
+                    <div class="friend-info">
+                        <!-- Image with double-click event to redirect -->
+                        <img src="/images/<%= friend.profilePicture %>" width="50" height="50"
+                             alt="<%= friend.profilePicture %>" 
+                             ondblclick="window.location.href='/user/<%= friend._id %>'">
 
-                <!-- Form to remove friend -->
-                <form action="/friends/remove/<%= friend._id %>" method="POST" style="display:inline;">
-                    <button type="submit" style="margin-left: 10px;">Remove Friend</button>
-                </form>
+                        <strong><%= friend.username %></strong> <!-- Display friend's username -->
+                    </div>
 
-                <!-- Chat button -->
-                <form action="/chat/<%= friend._id %>" method="GET" style="display:inline;">
-                    <button type="button" style="margin-left: 10px;" onclick="window.location.href='/chat/<%= friend._id %>'">Chat</button>
-                </form>
-            </li>
-        <% }) %>
-    </ul>
+                    <div class="button-group">
+                        <!-- Form to remove friend -->
+                        <form action="/friends/remove/<%= friend._id %>" method="POST">
+                            <button type="submit" style="background-color: tomato;color:#ffffff">Remove Friend</button>
+                        </form>
 
-    <h2>Available Users</h2>
-    <ul style="list-style: none; padding: 0;"> <!-- Remove default list styling -->
-        <% availableUsers.forEach(user => { %>
-            <li style="display: flex; align-items: center; margin-bottom: 15px;"> <!-- Add spacing between items -->
-                <img src="/images/<%= user.profilePicture %>" width="50" height="50" style="border-radius: 50%; margin-right: 15px;" alt="<%= user.profilePicture %>">
-                
-                <strong><%= user.username %></strong> <!-- Display available user's username -->
+                        <!-- Chat button -->
+                        <button type="button" onclick="window.location.href='/chat/<%= friend._id %>'">Chat</button>
+                    </div>
+                </li>
+            <% }) %>
+        </ul>
 
-                <!-- Form to send friend request -->
-                <form action="/friends/send-request/<%= user._id %>" method="POST" style="display:inline;">
-                    <button type="submit" style="margin-left: 10px;">Send Friend Request</button>
-                </form>
-            </li>
-        <% }); %>
-    </ul>
+        <h2>Available Users</h2>
+        <ul class="profile"> <!-- Flexbox applied to the list -->
+            <% availableUsers.forEach(user => { %>
+                <li id="profile"> <!-- Flexbox styles applied to li -->
+                    <div class="friend-info">
+                        <!-- Image with double-click event to redirect -->
+                        <img src="/images/<%= user.profilePicture %>" width="50" height="50"
+                             alt="<%= user.profilePicture %>" 
+                             ondblclick="window.location.href='/user/<%= user._id %>'">
+
+                        <strong><%= user.username %></strong> <!-- Display available user's username -->
+                    </div>
+
+                    <div class="button-group">
+                        <!-- Form to send friend request -->
+                        <form action="/friends/send-request/<%= user._id %>" method="POST">
+                            <button type="submit">Send Friend Request</button>
+                        </form>
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    </div> <!-- End of content-container -->
 
 </body>
 </html>

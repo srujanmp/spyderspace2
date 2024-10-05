@@ -6,6 +6,44 @@
     <title>Friend Requests</title>
     <link rel="stylesheet" href="/styles/styles.css"> <!-- Link to your CSS -->
     <style>
+        /* Add 20% margin for left and right */
+        .content-container {
+            margin: 0 20%; /* Adds 20% margin to the left and right */
+        }
+
+        /* Styling for the friend request list */
+        ul.pp {
+            padding: 0;
+            list-style: none;
+        }
+
+        li#pp {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        li img {
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        form {
+            display: inline;
+            margin-left: 10px;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #e0e0e0; /* Add hover effect */
+        }
+
         /* Styling for popup message */
         #popup-message {
             position: fixed;
@@ -17,30 +55,33 @@
             border-radius: 5px;
             display: none; /* Hidden by default */
         }
+
         #popup-message.error {
             background-color: #f44336; /* Red for error */
         }
     </style>
 </head>
 <body>
-    <%- include('_navbar.ejs') %> 
-    <h1>Friend Requests</h1>
+    <%- include('_navbar.ejs') %> <!-- Include the navbar partial -->
 
-    <ul>
-        <% requests.forEach(request => { %>
-            <li style="display: flex; align-items: center; margin-bottom: 15px;">
-                <img src="/images/<%= request.profilePicture %>" width="50" height="50" style="border-radius: 50%; margin-right: 15px;" alt="<%= request.profilePicture %>">
-                
-                <%= request.username %>
-                <form action="/friends/accept-request/<%= request._id %>" method="POST" style="display:inline;">
-                    <button type="submit">Accept </button>
-                </form>
-                <form action="/friends/reject-request/<%= request._id %>" method="POST" style="display:inline;">
-                    <button type="submit">Reject </button> 
-                </form>
-            </li>
-        <% }); %>
-    </ul>
+    <div class="content-container"> <!-- Added container for 20% margins -->
+        <h1>Friend Requests</h1>
+
+        <ul class="pp">
+            <% requests.forEach(request => { %>
+                <li id="pp">
+                    <img src="/images/<%= request.profilePicture %>" width="50" height="50" alt="<%= request.profilePicture %>">
+                    <%= request.username %>
+                    <form action="/friends/accept-request/<%= request._id %>" method="POST">
+                        <button type="submit">Accept</button>
+                    </form>
+                    <form action="/friends/reject-request/<%= request._id %>" method="POST">
+                        <button type="submit">Reject</button>
+                    </form>
+                </li>
+            <% }); %>
+        </ul>
+    </div> <!-- End of content-container -->
 
     <!-- Popup Message -->
     <div id="popup-message" class="<%= messageType === 'error' ? 'error' : '' %>">

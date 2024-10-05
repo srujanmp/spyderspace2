@@ -83,6 +83,7 @@ io.on('connection', (socket) => {
 const authRoutes = require('./routes/auth');
 const friendRoutes = require('./routes/friends'); //
 const chatRoutes = require('./routes/chat'); //
+const profileRoutes = require('./routes/user'); //
 app.use((req, res, next) => {
     res.locals.username = req.session.userId ? req.session.username : null; // Assuming you store username in session
     next();
@@ -91,6 +92,7 @@ app.use((req, res, next) => {
 app.use('/auth', authRoutes);
 app.use('/friends', friendRoutes);
 app.use('/chat', chatRoutes);
+app.use('/user', profileRoutes);
 // Middleware to protect the / route (restricted if not logged in)
 app.get('/', async (req, res) => {
     if (!req.session.userId) {
@@ -110,6 +112,9 @@ app.get('/', async (req, res) => {
     }
 });
 
+app.use('/',(req,res)=>{
+    res.redirect('/auth/login')
+})
 // Start the server
 const PORT = process.env.PORT || 3000;
 

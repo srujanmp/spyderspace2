@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= user.username %>'s Profile</title>
+    <link rel="stylesheet" href="/styles/styles.css"> <!-- Link to your CSS -->
+</head>
+
+<body>
+    <head><link rel="stylesheet" href="/styles/nav.css"> 
+        <link rel="stylesheet" href="/styles/global.css">
+    </head>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/friends/search-user">Search Users</a></li> 
+            <li><a href="/friends/requests">Incoming Req</a></li>
+            
+            <li><a href="/auth/logout">Logout</a></li>
+        </ul>
+        <p style="display: flex; align-items: center;"><img src="/images/<%= usr.profilePicture %>" width="50" height="50" style="border-radius: 100px;">
+            user: <strong><%= usr.username %></strong></p>
+    </nav>
+
+    <div class="profile-container" style="text-align: center; margin-top: 50px;">
+        <!-- Display the user's profile picture, name, and status -->
+        <img src="/images/<%= user.profilePicture %>" width="150" height="150" style="border-radius: 50%;" alt="Profile Picture">
+        <h1><%= user.username %></h1>
+        <p><%= user.status || 'status empty :)' %> </p>
+
+        <h2>Friends</h2>
+        <ul style="list-style: none; padding: 0;">
+            <% if (user.friends.length === 0) { %>
+                <p>No friends yet.</p>
+            <% } else { %>
+                <% user.friends.forEach(friend => { %>
+                    <li style="margin-bottom: 15px;">
+                        <img src="/images/<%= friend.profilePicture %>" width="50" height="50" 
+                        style="border-radius: 50%; margin-right: 10px;" 
+                        ondblclick="window.location.href='/user/<%= friend._id %>'">
+                        <strong><%= friend.username %></strong>
+                    </li>
+                <% }) %>
+            <% } %>
+        </ul>
+    </div>
+
+</body>
+
+</html>
