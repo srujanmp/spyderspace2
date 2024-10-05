@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with <%= receiver.username %></title>
+    <title>Chat with <%= receiver.username %>
+    </title>
     <link rel="stylesheet" href="styles/styles.css"> <!-- Include your styles -->
     <script src="/socket.io/socket.io.js"></script>
 
@@ -17,48 +18,62 @@
             padding: 10px;
             margin-bottom: 20px;
         }
-    
+
         #chat-messages {
             list-style-type: none;
             padding: 0;
             margin: 0;
         }
-    
+
         /* General message styles */
         #chat-messages li {
             display: flex;
             margin-bottom: 10px;
             max-width: 100%;
         }
-    
+
         /* Style for the sender's (logged-in user's) message */
         .message-sender {
-            justify-content: flex-end; /* Align to the right */
-            width: 100%; /* Ensure full width for sender's message */
+            justify-content: flex-end;
+            /* Align to the right */
+            width: 100%;
+            /* Ensure full width for sender's message */
         }
-    
+
         .message-sender .message {
-            background-color: #d1f0d1; /* Greenish background for sender's message */
-            border-radius: 15px 15px 0 15px; /* Round the corners */
-            max-width: 60%; /* Limit width */
-            padding: 10px; /* Padding for the message */
-            word-wrap: break-word; /* Ensure long words wrap */
+            background-color: #d1f0d1;
+            /* Greenish background for sender's message */
+            border-radius: 15px 15px 0 15px;
+            /* Round the corners */
+            max-width: 60%;
+            /* Limit width */
+            padding: 10px;
+            /* Padding for the message */
+            word-wrap: break-word;
+            /* Ensure long words wrap */
         }
-    
+
         /* Style for the receiver's message (aligned to the left) */
         .message-other {
-            justify-content: flex-start; /* Align to the left */
-            width: 100%; /* Ensure full width for receiver's message */
+            justify-content: flex-start;
+            /* Align to the left */
+            width: 100%;
+            /* Ensure full width for receiver's message */
         }
-    
+
         .message-other .message {
-            background-color: #f1f1f1; /* Light gray background for receiver's message */
-            border-radius: 15px 15px 15px 0; /* Round the corners */
-            max-width: 60%; /* Limit width */
-            padding: 10px; /* Padding for the message */
-            word-wrap: break-word; /* Ensure long words wrap */
+            background-color: #f1f1f1;
+            /* Light gray background for receiver's message */
+            border-radius: 15px 15px 15px 0;
+            /* Round the corners */
+            max-width: 60%;
+            /* Limit width */
+            padding: 10px;
+            /* Padding for the message */
+            word-wrap: break-word;
+            /* Ensure long words wrap */
         }
-    
+
         /* Message time styling */
         .message-time {
             font-size: 0.8em;
@@ -66,96 +81,120 @@
             margin-left: 10px;
         }
     </style>
-    
-    
-    
+
+
+
 </head>
 
 <body>
     <%- include('_navbar.ejs') %> <!-- Include the navbar -->
 
-    <h2>Chat with <%= receiver.username %></h2>
+        <h2>Chat with <%= receiver.username %>
+        </h2>
 
-    <div id="chat-window">
-        <ul id="chat-messages">
-            <% chatHistory.forEach(chat => { %>
-                <li class="<%= chat.sender.equals(sender._id) ? 'message-sender' : 'message-other' %>">
-                    <div class="message">
-                        <strong>
-                            <%= chat.sender.equals(sender._id) ? 'You' : receiver.username %>:
-                        </strong>
-                        <%= chat.message %> <span>(<%= new Date(chat.timestamp).toLocaleTimeString() %>)</span>
-                    </div>
-                </li>
-            <% }) %>
-        </ul>
+        <div id="chat-window">
+
+            <ul id="chat-messages">
+                <% chatHistory.forEach(chat=> { %>
+                    <li class="<%= chat.sender.equals(sender._id) ? 'message-sender' : 'message-other' %>">
+                        <div class="message">
+                            <strong>
+                                <%= chat.sender.equals(sender._id) ? 'You' : receiver.username %>:
+                            </strong>
+                            <%= chat.message %> <span class="message-time">(<%= new
+                                        Date(chat.timestamp).toLocaleTimeString() %>)</span>
+                        </div>
+                    </li>
+                    <% }) %>
+            </ul>
+
+
+
+        </div>
+
+        <form id="chat-form" style="display: flex; align-items: center; margin-top: 10px; margin:20px;">
+            <input type="text" 
+                   id="message-input" 
+                   placeholder="Type a message..." 
+                   required 
+                   style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-right: 10px;"/>
+                   
+            <button type="submit" 
+                    style="padding: 10px 15px; border: none; border-radius: 5px; background-color: #e66f44; color: white; cursor: pointer;">
+                Send
+            </button>
+        </form>
         
-    </div>
 
-    <form id="chat-form">
-        <input type="text" id="message-input" placeholder="Type a message..." required>
-        <button type="submit">Send</button>
-    </form>
-
-    <script>
-        const socket = io({
-            query: {
-                userId: "<%= sender._id %>" // Send the user's ID to the server
-            }
-        });
-    
-        const sender = "<%= sender._id %>"; // Sender (logged-in user)
-        const receiver = "<%= receiver._id %>"; // Receiver (other user)
-        const chatForm = document.getElementById('chat-form');
-        const messageInput = document.getElementById('message-input');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatWindow = document.getElementById('chat-window');
-    
-        // Scroll chat window to the bottom
-        function scrollToBottom() {
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-    
-        // Scroll to bottom on page load (to show latest messages)
-        window.onload = scrollToBottom;
-    
-        // Emit the message to the server when the form is submitted
-        chatForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const message = messageInput.value;
-    
-            console.log("Emitting sendMessage event:", { sender, receiver, message });
-            socket.emit('sendMessage', { sender, receiver, message }, (ack) => {
-                if (ack.error) {
-                    console.error('Message send error:', ack.error);
-                } else {
-                    console.log('Message sent successfully');
+        <script>
+            const socket = io({
+                query: {
+                    userId: "<%= sender._id %>" // Send the user's ID to the server
                 }
             });
-    
-            messageInput.value = ''; // Clear the input
-            scrollToBottom(); // Scroll to the bottom after sending the message
-        });
-    
-        // Listen for incoming messages from the server
-        socket.on('receiveMessage', function ({ sender, message, timestamp }) {
-            console.log("Received message:", { sender, message, timestamp });
-    
-            // Append the new message to the chat
-            const newMessage = document.createElement('li');
-            newMessage.className = sender === "<%= sender._id %>" ? 'message-sender' : 'message-other';
-            newMessage.innerHTML = `<div class="message">
-                                        <strong>${sender === "<%= sender._id %>" ? 'You' : '<%= receiver.username %>'}:</strong> 
-                                        ${message} 
-                                        <span class="message-time">(${new Date(timestamp).toLocaleTimeString()})</span>
-                                    </div>`;
-            chatMessages.appendChild(newMessage);
-    
-            // Scroll to the bottom after receiving the new message
-            scrollToBottom();
-        });
-    </script>
-    
+
+            const sender = "<%= sender._id %>"; // Sender (logged-in user)
+            const receiver = "<%= receiver._id %>"; // Receiver (other user)
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('message-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatWindow = document.getElementById('chat-window');
+
+            // Scroll chat window to the bottom
+            function scrollToBottom() {
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+
+            // Scroll to bottom on page load (to show latest messages)
+            window.onload = scrollToBottom;
+            window.onload=scrollToBottom();
+            // Emit the message to the server when the form is submitted
+            chatForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const message = messageInput.value;
+
+                console.log("Emitting sendMessage event:", { sender, receiver, message });
+                socket.emit('sendMessage', { sender, receiver, message }, (ack) => {
+                    if (ack.error) {
+                        console.error('Message send error:', ack.error);
+                    } else {
+                        console.log('Message sent successfully');
+                    }
+                });
+                window.onload = scrollToBottom;
+
+                messageInput.value = ''; // Clear the input
+                scrollToBottom(); // Scroll to the bottom after sending the message
+            });
+
+            // Listen for incoming messages from the server
+            // Listen for incoming messages from the server
+            socket.on('receiveMessage', function ({ sender, message, timestamp }) {
+                console.log("Received message:", { sender, message, timestamp });
+
+                // Append the new message to the chat
+                const newMessage = document.createElement('li');
+                newMessage.className = sender === "<%= sender._id %>" ? 'message-sender' : 'message-other'; // Ensure class matches EJS logic
+
+                // Create the message div
+                newMessage.innerHTML = `
+        <div class="message">
+            <strong>${sender === "<%= sender._id %>" ? 'You' : '<%= receiver.username %>'}:</strong>
+            ${message} 
+            <span class="message-time">(${new Date(timestamp).toLocaleTimeString()})</span>
+        </div>
+    `;
+
+                // Append the new message to chat messages
+                chatMessages.appendChild(newMessage);
+
+                // Scroll to the bottom of the chat window
+                 // Scroll to the bottom
+                scrollToBottom();
+            });
+
+        </script>
+
 </body>
 
 </html>
