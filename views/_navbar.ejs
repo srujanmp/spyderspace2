@@ -7,5 +7,6 @@
         <li><a href="/friends/list">Friends</a></li>
         <li><a href="/auth/logout">Logout</a></li>
     </ul>
-    <p>user: <strong><%= usr.username %></strong></p>
+    <p style="display: flex; align-items: center;"><img src="/images/<%= usr.profilePicture %>" width="50" height="50" style="border-radius: 100px;">
+        user: <strong><%= usr.username %></strong></p>
 </nav>

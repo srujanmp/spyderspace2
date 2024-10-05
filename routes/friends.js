@@ -13,6 +13,7 @@ router.get('/send-requests', async (req, res) => {
             friends: { $ne: userId } // Exclude friends
         });
         const usr = await User.findById(req.session.userId);
+        
         res.render('sendRequests', { users ,usr});
     } catch (err) {
         console.error(err);
@@ -127,7 +128,7 @@ router.get('/list', async (req, res) => {
     const userId = req.session.userId; // Logged-in user ID
 
     try {
-        const user = await User.findById(userId).populate('friends', 'username'); // Populate friends' usernames
+        const user = await User.findById(userId).populate('friends', 'username profilePicture'); // Populate friends' usernames
 
         if (!user) {
             return res.status(404).send('User not found.');
@@ -135,7 +136,7 @@ router.get('/list', async (req, res) => {
 
         // Render a view to display friends
         const usr = await User.findById(req.session.userId);
-        res.render('friendsList', { friends: user.friends ,usr});
+        res.render('friendsList', { friends: user.friends,usr});
     } catch (err) {
         console.error(err);
         res.status(500).send('Error fetching friends.');

@@ -1,0 +1,1 @@
+const usr = await User.findById(req.session.userId);
