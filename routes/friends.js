@@ -83,7 +83,6 @@ router.get('/requests', async (req, res) => {
     }
 });
 
-
 router.post('/accept-request/:userId', async (req, res) => {
     const requesterId = req.params.userId; // User who sent the request
     const targetId = req.session.userId; // Logged-in user
@@ -96,6 +95,17 @@ router.post('/accept-request/:userId', async (req, res) => {
         if (!targetUser.friendRequests.includes(requesterId)) {
             req.session.message = 'No friend request from this user.';
             return res.redirect('/friends/requests'); // Redirect back
+        }
+
+        // Check if they are already friends
+        if (targetUser.friends.includes(requesterId)) {
+            req.session.message = 'already your friend.';
+
+            // Remove the friend request from the target user
+            targetUser.friendRequests = targetUser.friendRequests.filter(id => id.toString() !== requesterId);
+            await targetUser.save();
+
+            return res.redirect('/friends/requests'); // Redirect without adding
         }
 
         // Accept the friend request
@@ -119,6 +129,7 @@ router.post('/accept-request/:userId', async (req, res) => {
         res.redirect('/friends/requests');
     }
 });
+
 
 // Reject friend request
 router.post('/reject-request/:userId', async (req, res) => {
