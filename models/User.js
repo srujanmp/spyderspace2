@@ -18,6 +18,12 @@ const userSchema = new mongoose.Schema({
             return `${randomNumber}.webp`; // Assigns a random .webp file from 1 to 10
         }
     },
+    
+    status: {
+        type: String,
+        maxlength: 50,
+        default: '' // Default empty status
+    },
     friendRequests: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

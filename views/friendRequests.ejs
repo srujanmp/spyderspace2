@@ -13,6 +13,8 @@
     <ul>
         <% requests.forEach(request => { %>
             <li>
+                <img src="/images/<%= request.profilePicture %>" width="50" height="50" style="border-radius: 50%; margin-right: 15px;" alt="<%= request.profilePicture %>">
+                
                 <%= request.username %>
                 <form action="/friends/accept-request/<%= request._id %>" method="POST" style="display:inline;">
                     <button type="submit">Accept</button>

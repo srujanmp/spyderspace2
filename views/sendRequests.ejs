@@ -7,22 +7,25 @@
     <link rel="stylesheet" href="/styles.css"> <!-- Link to your CSS -->
 </head>
 <body>
-    <%- include('_navbar.ejs') %> <!-- Corrected syntax for including the navbar -->
+    <%- include('_navbar.ejs') %> <!-- Include the navbar partial -->
 
     <h1>Send Friend Requests</h1>
 
     <h2>Available Users</h2>
-    <ul>
+    <ul style="list-style: none; padding: 0;"> <!-- Remove default list styling -->
         <% users.forEach(user => { %>
-            <li>
-                <%= user.username %>
+            <li style="display: flex; align-items: center; margin-bottom: 15px;"> <!-- Add spacing between items -->
+                <!-- Display profile picture with better size and spacing -->
+                <img src="/images/<%= user.profilePicture %>" width="50" height="50" style="border-radius: 50%; margin-right: 15px;" alt="<%= user.profilePicture %>">
+                
+                <strong><%= user.username %></strong> <!-- Display username -->
+                
+                <!-- Form to send friend request -->
                 <form action="/friends/send-request/<%= user._id %>" method="POST" style="display:inline;">
-                    <button type="submit">Send Friend Request</button>
+                    <button type="submit" style="margin-left: 10px;">Send Friend Request</button>
                 </form>
             </li>
         <% }); %>
     </ul>
-
-    
 </body>
 </html>
