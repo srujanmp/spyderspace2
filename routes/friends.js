@@ -61,27 +61,29 @@ router.post('/send-request/:userId', async (req, res) => {
     }
 });
 
-// Get friend requests
 router.get('/requests', async (req, res) => {
-    const userId = req.session.userId; // Logged-in user ID
-
     try {
-        const user = await User.findById(userId).populate('friendRequests', 'username profilePicture status');
+        // Get message from session, if any
+        const message = req.session.message;
+        const messageType = req.session.messageType || 'success'; // Default to 'success'
         
+        // Clear the message from the session
+        req.session.message = null;
+        req.session.messageType = null;
+        const user = await User.findById(req.session.userId).populate('friendRequests', 'username profilePicture');
         if (!user) {
-            return res.status(404).send('User not found.');
+            return res.redirect('/auth/login');
         }
-
-        // Render a view to display friend requests
         const usr = await User.findById(req.session.userId);
-        res.render('friendRequests', { requests: user.friendRequests ,usr});
+        // Render the requests page and pass the message to the view
+        res.render('friendRequests', { requests: user.friendRequests ,usr, message, messageType});
     } catch (err) {
         console.error(err);
-        res.status(500).send('Error fetching friend requests.');
+        res.status(500).send('Error fetching requests.');
     }
 });
 
-// Accept friend request
+
 router.post('/accept-request/:userId', async (req, res) => {
     const requesterId = req.params.userId; // User who sent the request
     const targetId = req.session.userId; // Logged-in user
@@ -92,7 +94,8 @@ router.post('/accept-request/:userId', async (req, res) => {
 
         // Check if the friend request exists
         if (!targetUser.friendRequests.includes(requesterId)) {
-            return res.status(400).send('No friend request from this user.');
+            req.session.message = 'No friend request from this user.';
+            return res.redirect('/friends/requests'); // Redirect back
         }
 
         // Accept the friend request
@@ -105,11 +108,15 @@ router.post('/accept-request/:userId', async (req, res) => {
         await targetUser.save();
         await requesterUser.save();
 
+        // Set a success message in the session
         req.session.message = 'Friend request accepted!';
-        res.redirect("/friends/requests");
+
+        // Redirect back to the requests page
+        res.redirect('/friends/requests');
     } catch (err) {
         console.error(err);
-        res.status(500).send('Error accepting friend request.');
+        req.session.message = 'Error accepting friend request.';
+        res.redirect('/friends/requests');
     }
 });
 

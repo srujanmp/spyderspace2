@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friend Requests</title>
     <link rel="stylesheet" href="/styles.css"> <!-- Link to your CSS -->
+    <style>
+        /* Styling for popup message */
+        #popup-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4caf50; /* Green for success */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            display: none; /* Hidden by default */
+        }
+        #popup-message.error {
+            background-color: #f44336; /* Red for error */
+        }
+    </style>
 </head>
 <body>
     <%- include('_navbar.ejs') %> 
@@ -12,20 +28,37 @@
 
     <ul>
         <% requests.forEach(request => { %>
-            <li>
+            <li style="display: flex; align-items: center; margin-bottom: 15px;">
                 <img src="/images/<%= request.profilePicture %>" width="50" height="50" style="border-radius: 50%; margin-right: 15px;" alt="<%= request.profilePicture %>">
                 
                 <%= request.username %>
                 <form action="/friends/accept-request/<%= request._id %>" method="POST" style="display:inline;">
-                    <button type="submit">Accept</button>
+                    <button type="submit">Accept </button>
                 </form>
                 <form action="/friends/reject-request/<%= request._id %>" method="POST" style="display:inline;">
-                    <button type="submit">Reject</button>
+                    <button type="submit">Reject </button> 
                 </form>
             </li>
         <% }); %>
     </ul>
 
-    
+    <!-- Popup Message -->
+    <div id="popup-message" class="<%= messageType === 'error' ? 'error' : '' %>">
+        <%= message %>
+    </div>
+
+    <script>
+        // Display the popup if a message exists
+        const message = "<%= message %>";
+        if (message) {
+            const popup = document.getElementById('popup-message');
+            popup.style.display = 'block'; // Show the popup
+
+            // Hide the popup after 2 seconds
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 2000);
+        }
+    </script>
 </body>
 </html>

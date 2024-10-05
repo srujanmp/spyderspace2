@@ -29,7 +29,8 @@ router.post('/signup', async (req, res) => {
         });
 
         await newUser.save();  // Save the user to MongoDB
-        res.send('User registered successfully!');
+        //alert('Account Created, Please Login');
+        res.redirect('/auth/login')
     } catch (err) {
         console.error(err);
         res.send('Error occurred while registering the user.');
