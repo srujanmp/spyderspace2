@@ -33,9 +33,13 @@
             <input type="text" id="message-input" placeholder="Type a message..." required>
             <button type="submit">Send</button>
         </form>
-        
+
         <script>
-            const socket = io();
+            const socket = io({
+                query: {
+                    userId: "<%= sender._id %>" // Send the user's ID to the server
+                }
+            });
 
             const sender = "<%= sender._id %>"; // Sender (logged-in user)
             const receiver = "<%= receiver._id %>"; // Receiver (other user)
@@ -47,14 +51,23 @@
             chatForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 const message = messageInput.value;
-                socket.emit('sendMessage', { sender, receiver, message });
-                messageInput.value = ''; // Clear the input
 
+                console.log("Emitting sendMessage event:", { sender, receiver, message });
+                socket.emit('sendMessage', { sender, receiver, message }, (ack) => {
+                    if (ack.error) {
+                        console.error('Message send error:', ack.error);
+                    } else {
+                        console.log('Message sent successfully');
+                    }
+                });
+
+                messageInput.value = ''; // Clear the input
             });
 
             // Listen for incoming messages from the server
             socket.on('receiveMessage', function ({ sender, message, timestamp }) {
-                console.log("Message received"); // Debugging
+                console.log("Received message:", { sender, message, timestamp });
+
                 // Append the new message to the chat
                 const newMessage = document.createElement('li');
                 newMessage.innerHTML = `<strong>${sender === "<%= sender._id %>" ? 'You' : '<%= receiver.username %>'}:</strong> ${message} <span>(${new Date(timestamp).toLocaleTimeString()})</span>`;
@@ -62,6 +75,7 @@
             });
 
         </script>
+
 </body>
 
 </html>

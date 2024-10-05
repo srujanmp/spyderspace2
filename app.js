@@ -39,39 +39,45 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Socket.io setup
 io.on('connection', (socket) => {
-    console.log('New WebSocket connection established.');
+    const userId = socket.handshake.query.userId || socket.request.session.userId;
+    
+    if (userId) {
+        socket.join(userId);
+        console.log(`User ${userId} connected and joined room ${userId}`);
 
-    // Handle incoming messages from the client
-    socket.on('sendMessage', async ({ sender, receiver, message }) => {
-        try {
-            // Save the message in the database
-            const chatMessage = new Chat({
-                sender,
-                receiver,
-                message
-            });
-            await chatMessage.save();
-            
-            io.emit('receiveMessage', {
-                sender,
-                message,
-                timestamp: chatMessage.timestamp
-            });
-            
-            
-        } catch (err) {
-            console.error('Error sending message:', err);
-        }
-    });
+        // Handle incoming messages from the client
+        socket.on('sendMessage', async ({ sender, receiver, message }, callback) => {
+            try {
+                // Save the message in the database
+                const chatMessage = new Chat({ sender, receiver, message });
+                await chatMessage.save();
+        
+                // Emit to receiver's room
+                io.to(receiver).emit('receiveMessage', { 
+                    sender, 
+                    message, 
+                    timestamp: chatMessage.timestamp 
+                });
+                io.to(sender).emit('receiveMessage', {
+                    sender,
+                    message,
+                    timestamp: chatMessage.timestamp
+                });
+                callback({ success: true });  // Acknowledge success
+            } catch (err) {
+                callback({ error: 'Error saving message' });  // Acknowledge failure
+            }
+        });
+        
+    }
 
     // Handle disconnection
     socket.on('disconnect', () => {
-        console.log('WebSocket disconnected.');
+        console.log(`User ${userId} disconnected.`);
     });
 });
+
 
 // Import routes
 const authRoutes = require('./routes/auth');
