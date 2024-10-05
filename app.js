@@ -6,9 +6,12 @@ const session = require('express-session');
 const User = require('./models/User.js');
 const app = express();
 
-// Connect to MongoDB (replace with your connection string)
-mongoose.connect('mongodb://localhost/socialmedia');
+// Load environment variables from .env file
+require('dotenv').config();
 
+// Connect to MongoDB using the URI from the .env file
+const mongoURI = process.env.MONGODB_URI;
+mongoose.connect(mongoURI)
 // Middleware for parsing form data
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
