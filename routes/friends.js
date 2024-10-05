@@ -2,24 +2,32 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
-// Get all users to send friend requests
-router.get('/send-requests', async (req, res) => {
+// Get friends list and available users to send friend requests
+router.get('/search-user', async (req, res) => {
     const userId = req.session.userId; // Logged-in user ID
 
     try {
+        // Fetch the logged-in user
+        const user = await User.findById(userId).populate('friends', 'username profilePicture status'); // Populate friends' usernames
+
+        if (!user) {
+            return res.redirect('/auth/login'); // Redirect to login
+        }
+
         // Fetch all users except the logged-in user and their friends
-        const users = await User.find({ 
+        const availableUsers = await User.find({ 
             _id: { $ne: userId },
             friends: { $ne: userId } // Exclude friends
         });
-        const usr = await User.findById(req.session.userId);
-        
-        res.render('sendRequests', { users ,usr});
+
+        // Render a view to display friends and available users
+        res.render('SEARCHUSER', { friends: user.friends, availableUsers, usr: user });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error fetching users.');
     }
 });
+
 
 // Send friend request
 router.post('/send-request/:userId', async (req, res) => {
@@ -58,7 +66,7 @@ router.get('/requests', async (req, res) => {
     const userId = req.session.userId; // Logged-in user ID
 
     try {
-        const user = await User.findById(userId).populate('friendRequests', 'username');
+        const user = await User.findById(userId).populate('friendRequests', 'username profilePicture status');
         
         if (!user) {
             return res.status(404).send('User not found.');
@@ -97,7 +105,8 @@ router.post('/accept-request/:userId', async (req, res) => {
         await targetUser.save();
         await requesterUser.save();
 
-        res.send('Friend request accepted!');
+        req.session.message = 'Friend request accepted!';
+        res.redirect("/friends/requests");
     } catch (err) {
         console.error(err);
         res.status(500).send('Error accepting friend request.');
@@ -123,25 +132,6 @@ router.post('/reject-request/:userId', async (req, res) => {
     }
 });
 
-// Get friends list
-router.get('/list', async (req, res) => {
-    const userId = req.session.userId; // Logged-in user ID
-
-    try {
-        const user = await User.findById(userId).populate('friends', 'username profilePicture status'); // Populate friends' usernames
-
-        if (!user) {
-            return res.status(404).send('User not found.');
-        }
-
-        // Render a view to display friends
-        const usr = await User.findById(req.session.userId);
-        res.render('friendsList', { friends: user.friends,usr});
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error fetching friends.');
-    }
-});
 
 // Remove a friend
 router.post('/remove/:friendId', async (req, res) => {
@@ -155,10 +145,10 @@ router.post('/remove/:friendId', async (req, res) => {
         // Update the friend's friends list (if you want mutual removal)
         await User.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
 
-        res.redirect('/friends/list'); // Redirect to the friends list page after removal
+        res.redirect('/friends/search-user'); // Redirect to the friends list page after removal
     } catch (error) {
         console.error(error);
-        res.redirect('/friends/list'); // Redirect on error
+        res.redirect('/friends/search-user'); // Redirect on error
     }
 });
 
