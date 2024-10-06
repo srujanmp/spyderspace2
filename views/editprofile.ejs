@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Edit Profile
+    </title>
+    <link rel="stylesheet" href="styles/styles.css"> <!-- Include your styles -->
+
+</head>
+
+<body>
+    <%- include('_navbar.ejs') %> <!-- Include the navbar -->
+
+
+<form action="/user/update-profile" method="POST">
+    <label for="username">Name:</label>
+    <input type="text" id="username" name="username" value="<%= usr.username %>" required>
+    
+    <label for="status">Status:</label>
+    <input type="text" id="status" name="status" value="<%= usr.status %>" maxlength="50">
+    
+    <label for="profilePicture">Profile Picture:</label>
+    <div id="profile-images">
+        <% for (let i = 1; i <= 10; i++) { %>
+            <label>
+                <input type="radio" name="profilePicture" value="<%= i %>.webp" <%= usr.profilePicture === `${i}.webp` ? 'checked' : '' %>>
+                <img src="/images/<%= i %>.webp" alt="Profile Picture <%= i %>" width="50" height="50">
+            </label>
+        <% } %>
+    </div>
+
+    <button type="submit">Update Profile</button>
+</form>
+</body>
+
+</html>

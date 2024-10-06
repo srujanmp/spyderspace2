@@ -11,6 +11,20 @@
 <body>
     <head><link rel="stylesheet" href="/styles/nav.css"> 
         <link rel="stylesheet" href="/styles/global.css">
+        <style>
+            img.notnav {
+                border-radius: 100px;
+                border: 5px solid white; /* Fat white border */
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+                transition: transform 0.2s ease-in-out; /* Smooth transition for hover effect */
+            }
+        
+            img:hover {
+                transform: scale(1.05); /* Slight zoom on hover for more interactivity */
+                box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+            }
+        </style>
+        
     </head>
     <nav>
         <ul>
@@ -26,7 +40,7 @@
 
     <div class="profile-container" style="text-align: center; margin-top: 50px;">
         <!-- Display the user's profile picture, name, and status -->
-        <img src="/images/<%= user.profilePicture %>" width="150" height="150" style="border-radius: 50%;" alt="Profile Picture">
+        <img src="/images/<%= user.profilePicture %>"  class="notnav" width="150" height="150" style="border-radius: 50%;" alt="Profile Picture">
         <h1><%= user.username %></h1>
         <p><%= user.status || 'status empty :)' %> </p>
 
@@ -38,13 +52,19 @@
                 <% user.friends.forEach(friend => { %>
                     <li style="margin-bottom: 15px;">
                         <img src="/images/<%= friend.profilePicture %>" width="50" height="50" 
-                        style="border-radius: 50%; margin-right: 10px;" 
+                        style="border-radius: 50%; margin-right: 10px;" class="notnav"
                         ondblclick="window.location.href='/user/<%= friend._id %>'">
                         <strong><%= friend.username %></strong>
                     </li>
                 <% }) %>
             <% } %>
         </ul>
+
+        <% if (isOwner) { %>
+            <a href="/user/update-profile" style="border-radius:40px;">
+                <button>Edit Profile🖊️</button>
+            </a>
+        <% } %>
     </div>
 
 </body>

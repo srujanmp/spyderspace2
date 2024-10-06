@@ -9,6 +9,8 @@
         
         <li><a href="/auth/logout">Logout</a></li>
     </ul>
-    <p style="display: flex; align-items: center;"><img src="/images/<%= usr.profilePicture %>" width="50" height="50" style="border-radius: 100px;">
+    <p style="display: flex; align-items: center;"><a href="/user/<%= usr._id %>">
+        <img src="/images/<%= usr.profilePicture %>" width="50" height="50" style="border-radius: 100px;">
+    </a>
         user: <strong><%= usr.username %></strong></p>
 </nav>
