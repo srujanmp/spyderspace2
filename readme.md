@@ -16,3 +16,15 @@ name,admin array,user array,messages
 create posts
 create a feed
 
+
+emails:
+mailgun
+
+
+sms:
+bashsms
+twilio (logged in)
+
+hosting:
+port forwa5rd shud work but not working
+ngrok
